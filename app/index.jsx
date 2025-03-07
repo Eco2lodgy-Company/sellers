@@ -7,7 +7,7 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
-export default function Login() {
+export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -87,7 +87,8 @@ const [adresse, setAdresse] = useState('');
   
 
   async function signInWithFacebook() {
-    router.replace('/explore');
+    navigation.navigate('onboard');
+    router.replace('/onboard');
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -244,6 +245,15 @@ return (
                         {isLogin ? 'Nouveau ? Créer un compte' : 'Déjà inscrit ? Se connecter'}
                     </Text>
                 </TouchableOpacity>
+                <Button
+                        title='unboard'
+                        loading={loading}
+                        onPress={() => router.replace('/screens/home/page')}
+                        containerStyle={styles.buttonContainer}
+                        buttonStyle={styles.button}
+                        titleStyle={styles.buttonText}
+                        loadingProps={{ color: 'white' }}
+                    />
             </View>
         ) : (
             <ScrollView>
