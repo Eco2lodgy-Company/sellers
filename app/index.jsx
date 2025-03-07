@@ -40,27 +40,51 @@ const [adresse, setAdresse] = useState('');
 
   async function signUpWithEmail() {
     if (!validateInputs()) return;
-    
+  
     setLoading(true);
     try {
-      const { data: { session }, error } = await supabase.auth.signUp({
+      // Étape 1 : Créez un compte utilisateur avec Supabase Auth
+      const { data, error: authError } = await supabase.auth.signUp({
         email: email,
         password: password,
       });
-      
-      if (error) throw error;
-      
-      if (!session) {
-        Alert.alert('Inscription réussie', 'Veuillez vérifier votre boîte mail pour confirmer votre compte !');
-      } else {
-        router.replace('/explore');
+  
+      if (authError) throw authError; // Gestion de l'erreur d'inscription
+  
+      // Étape 2 : Vérifiez que `session` et `user` existent
+      const userId = data?.user?.id;
+      if (!userId) {
+        Alert.alert(
+          'Inscription réussie',
+          'Veuillez vérifier votre boîte mail pour confirmer votre compte !'
+        );
+        return;
       }
+  
+      // Étape 3 : Insérez les informations dans la table `users`
+      const { data: insertData, error: insertError } = await supabase.from('users').insert([
+        {
+          id: userId, // Clé étrangère associée
+          first_name: prenom,
+          last_name: nom,
+          tel: telephone,
+          address: adresse,
+          email: email,
+          password: password, // À NE PAS CONSERVER EN CLAIR DANS LA BDD
+        },
+      ]);
+  
+      if (insertError) throw insertError; // Gestion des erreurs d'insertion
+  
+      Alert.alert('Inscription réussie', 'Compte créé avec succès !');
+      console.log('Utilisateur inséré dans la table `users` :', insertData);
     } catch (error) {
       Alert.alert('Erreur d\'inscription', error.message);
     } finally {
       setLoading(false);
     }
   }
+  
 
   async function signInWithFacebook() {
     router.replace('/explore');
@@ -351,13 +375,13 @@ return (
                     </View>
                     
                     <TouchableOpacity
-                        style={styles.switchModeContainer}
-                        onPress={() => setIsLogin(!isLogin)}
-                    >
-                        <Text style={styles.switchModeText}>
-                            {isLogin ? 'Nouveau ? Créer un compte' : 'Déjà inscrit ? Se connecter'}
-                        </Text>
-                    </TouchableOpacity>
+                    style={styles.switchModeContainer}
+                    onPress={() => setIsLogin(!isLogin)}
+                >
+                    <Text style={styles.switchModeText}>
+                        {isLogin ? 'Nouveau ? Créer un compte' : 'Déjà inscrit ? Se connecter'}
+                    </Text>
+                </TouchableOpacity>
                 </View>
             </ScrollView>
         )}
