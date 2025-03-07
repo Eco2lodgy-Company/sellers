@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView, ActivityIndicator, Dimensions, ScrollView } from 'react-native';
+import { Alert, StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Button, Input, Divider } from '@rneui/themed';
 import { router } from 'expo-router';
@@ -13,11 +13,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
-  const [prenom, setPrenom] = useState('');
-const [nom, setNom] = useState('');
-const [telephone, setTelephone] = useState('');
-const [adresse, setAdresse] = useState('');
-
 
   async function signInWithEmail() {
     if (!validateInputs()) return;
@@ -63,7 +58,6 @@ const [adresse, setAdresse] = useState('');
   }
 
   async function signInWithFacebook() {
-    router.replace('/explore');
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -123,252 +117,246 @@ const [adresse, setAdresse] = useState('');
     setSecureTextEntry(!secureTextEntry);
   };
 
-return (
+  return (
     <SafeAreaView style={styles.container} options={{ headerShown: false }}>
-        {isLogin ? (
-            <View style={styles.formContainer}>
-                <Image
-                    source={require('../assets/images/icon.png')}
-                    style={styles.logo}
-                    resizeMode="contain"
+     {isLogin? <View style={styles.formContainer}>
+        <Image
+          source={require('../assets/images/icon.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        
+        <Text style={styles.title}>
+          Connexion
+        </Text>
+        
+        <View style={styles.inputContainer}>
+          <Input
+            placeholder="Email"
+            leftIcon={<Ionicons name="mail-outline" size={24} color="green" />}
+            onChangeText={setEmail}
+            value={email}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            containerStyle={styles.input}
+            inputContainerStyle={styles.inputField}
+          />
+          
+          <Input
+            placeholder="Mot de passe"
+            leftIcon={<Ionicons name="lock-closed-outline" size={24} color="green" />}
+            rightIcon={
+              <TouchableOpacity onPress={toggleSecureTextEntry}>
+                <Ionicons
+                  name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
+                  size={24}
+                  color="green"
                 />
-                
-                <Text style={styles.title}>
-                    Connexion
-                </Text>
-                
-                <View style={styles.inputContainer}>
-                    <Input
-                        placeholder="Email"
-                        leftIcon={<Ionicons name="mail-outline" size={24} color="green" />}
-                        onChangeText={setEmail}
-                        value={email}
-                        autoCapitalize="none"
-                        keyboardType="email-address"
-                        containerStyle={styles.input}
-                        inputContainerStyle={styles.inputField}
-                    />
-                    
-                    <Input
-                        placeholder="Mot de passe"
-                        leftIcon={<Ionicons name="lock-closed-outline" size={24} color="green" />}
-                        rightIcon={
-                            <TouchableOpacity onPress={toggleSecureTextEntry}>
-                                <Ionicons
-                                    name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
-                                    size={24}
-                                    color="green"
-                                />
-                            </TouchableOpacity>
-                        }
-                        onChangeText={setPassword}
-                        value={password}
-                        secureTextEntry={secureTextEntry}
-                        autoCapitalize="none"
-                        containerStyle={styles.input}
-                        inputContainerStyle={styles.inputField}
-                    />
-                </View>
-                
-                {isLogin && (
-                    <TouchableOpacity style={styles.forgotPassword}>
-                        <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
-                    </TouchableOpacity>
-                )}
-                
-                <Button
-                    title={isLogin ? 'Se connecter' : 'S\'inscrire'}
-                    loading={loading}
-                    onPress={isLogin ? signInWithEmail : signUpWithEmail}
-                    containerStyle={styles.buttonContainer}
-                    buttonStyle={styles.button}
-                    titleStyle={styles.buttonText}
-                    loadingProps={{ color: 'white' }}
-                />
-                
-                <View style={styles.separatorContainer}>
-                    <Divider style={styles.divider} />
-                    <Text style={styles.separatorText}>OU</Text>
-                    <Divider style={styles.divider} />
-                </View>
-                
-                <View style={styles.socialButtonsContainer}>
-                    <TouchableOpacity
-                        style={[styles.socialButton, styles.facebookButton]}
-                        onPress={signInWithFacebook}
-                        disabled={loading}
-                    >
-                        <FontAwesome name="facebook" size={24} color="white" />
-                        <Text style={styles.socialButtonText}>Facebook</Text>
-                    </TouchableOpacity>
-                    
-                    <TouchableOpacity
-                        style={[styles.socialButton, styles.googleButton]}
-                        onPress={signInWithGoogle}
-                        disabled={loading}
-                    >
-                        <FontAwesome name="google" size={24} color="white" />
-                        <Text style={styles.socialButtonText}>Google</Text>
-                    </TouchableOpacity>
-                </View>
-                
-                <TouchableOpacity
-                    style={styles.switchModeContainer}
-                    onPress={() => setIsLogin(!isLogin)}
-                >
-                    <Text style={styles.switchModeText}>
-                        {isLogin ? 'Nouveau ? Créer un compte' : 'Déjà inscrit ? Se connecter'}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        ) : (
-            <ScrollView>
-                <View style={styles.formContainer}>
-                    <Image
-                        source={require('../assets/images/icon.png')}
-                        style={styles.logo}
-                        resizeMode="contain"
-                    />
-                    
-                    <Text style={styles.title}>
-                        Inscription
-                    </Text>
-                    
-                    <View style={styles.inputContainer}>
-                        <Input
-                            placeholder="Prenom"
-                            leftIcon={<Ionicons name="text-outline" size={24} color="green" />}
-                            onChangeText={setPrenom}
-                            value={prenom}
-                            autoCapitalize="none"
-                            keyboardType="default"
-                            containerStyle={styles.input}
-                            inputContainerStyle={styles.inputField}
-                            require
-                        />
-                        <Input
-                            placeholder="Nom"
-                            leftIcon={<Ionicons name="text-outline" size={24} color="green" />}
-                            onChangeText={setNom}
-                            value={nom}
-                            autoCapitalize="yes"
-                            keyboardType="default"
-                            containerStyle={styles.input}
-                            inputContainerStyle={styles.inputField}
-                        />
-                        <Input
-                            placeholder="Telephone"
-                            leftIcon={<Ionicons name="call-outline" size={24} color="green" />}
-                            onChangeText={setTelephone}
-                            value={telephone}
-                            autoCapitalize="none"
-                            keyboardType="phone-pad"
-                            containerStyle={styles.input}
-                            inputContainerStyle={styles.inputField}
-                        />
-                        <Input
-                            placeholder="Adresse"
-                            leftIcon={<Ionicons name="home-outline" size={24} color="green" />}
-                            onChangeText={setAdresse}
-                            value={adresse}
-                            autoCapitalize="none"
-                            keyboardType="default"
-                            containerStyle={styles.input}
-                            inputContainerStyle={styles.inputField}
-                        />
-                        <Input
-                            placeholder="Email"
-                            leftIcon={<Ionicons name="mail-outline" size={24} color="green" />}
-                            onChangeText={setEmail}
-                            value={email}
-                            autoCapitalize="none"
-                            keyboardType="email-address"
-                            containerStyle={styles.input}
-                            inputContainerStyle={styles.inputField}
-                        />
-                        
-                        <Input
-                            placeholder="Mot de passe"
-                            leftIcon={<Ionicons name="lock-closed-outline" size={24} color="green" />}
-                            rightIcon={
-                                <TouchableOpacity onPress={toggleSecureTextEntry}>
-                                    <Ionicons
-                                        name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
-                                        size={24}
-                                        color="green"
-                                    />
-                                </TouchableOpacity>
-                            }
-                            onChangeText={setPassword}
-                            value={password}
-                            secureTextEntry={secureTextEntry}
-                            autoCapitalize="none"
-                            containerStyle={styles.input}
-                            inputContainerStyle={styles.inputField}
-                        />
-                    </View>
-                    
-                    {isLogin && (
-                        <TouchableOpacity style={styles.forgotPassword}>
-                            <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
-                        </TouchableOpacity>
-                    )}
-                    
-                    <Button
-                        title='inscrire'
-                        loading={loading}
-                        onPress={isLogin ? signInWithEmail : signUpWithEmail}
-                        containerStyle={styles.buttonContainer}
-                        buttonStyle={styles.button}
-                        titleStyle={styles.buttonText}
-                        loadingProps={{ color: 'white' }}
-                    />
-                    
-                    <View style={styles.separatorContainer}>
-                        <Divider style={styles.divider} />
-                        <Text style={styles.separatorText}>OU</Text>
-                        <Divider style={styles.divider} />
-                    </View>
-                    
-                    <View style={styles.socialButtonsContainer}>
-                        <TouchableOpacity
-                            style={[styles.socialButton, styles.facebookButton]}
-                            onPress={signInWithFacebook}
-                            disabled={loading}
-                        >
-                            <FontAwesome name="facebook" size={24} color="white" />
-                            <Text style={styles.socialButtonText}>Facebook</Text>
-                        </TouchableOpacity>
-                        
-                        <TouchableOpacity
-                            style={[styles.socialButton, styles.googleButton]}
-                            onPress={signInWithGoogle}
-                            disabled={loading}
-                        >
-                            <FontAwesome name="google" size={24} color="white" />
-                            <Text style={styles.socialButtonText}>Google</Text>
-                        </TouchableOpacity>
-                    </View>
-                    
-                    <TouchableOpacity
-                        style={styles.switchModeContainer}
-                        onPress={() => setIsLogin(!isLogin)}
-                    >
-                        <Text style={styles.switchModeText}>
-                            {isLogin ? 'Nouveau ? Créer un compte' : 'Déjà inscrit ? Se connecter'}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
+              </TouchableOpacity>
+            }
+            onChangeText={setPassword}
+            value={password}
+            secureTextEntry={secureTextEntry}
+            autoCapitalize="none"
+            containerStyle={styles.input}
+            inputContainerStyle={styles.inputField}
+          />
+        </View>
+        
+        {isLogin && (
+          <TouchableOpacity style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
+          </TouchableOpacity>
         )}
         
-        {loading && (
-            <View style={styles.loadingOverlay}>
-                <ActivityIndicator size="large" color="#ffffff" />
-            </View>
+        <Button
+          title={isLogin ? 'Se connecter' : 'S\'inscrire'}
+          loading={loading}
+          onPress={isLogin ? signInWithEmail : signUpWithEmail}
+          containerStyle={styles.buttonContainer}
+          buttonStyle={styles.button}
+          titleStyle={styles.buttonText}
+          loadingProps={{ color: 'white' }}
+        />
+        
+        <View style={styles.separatorContainer}>
+          <Divider style={styles.divider} />
+          <Text style={styles.separatorText}>OU</Text>
+          <Divider style={styles.divider} />
+        </View>
+        
+        <View style={styles.socialButtonsContainer}>
+          <TouchableOpacity
+            style={[styles.socialButton, styles.facebookButton]}
+            onPress={signInWithFacebook}
+            disabled={loading}
+          >
+            <FontAwesome name="facebook" size={24} color="white" />
+            <Text style={styles.socialButtonText}>Facebook</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={[styles.socialButton, styles.googleButton]}
+            onPress={signInWithGoogle}
+            disabled={loading}
+          >
+            <FontAwesome name="google" size={24} color="white" />
+            <Text style={styles.socialButtonText}>Google</Text>
+          </TouchableOpacity>
+        </View>
+        
+        <TouchableOpacity
+          style={styles.switchModeContainer}
+          onPress={() => setIsLogin(!isLogin)}
+        >
+          <Text style={styles.switchModeText}>
+            {isLogin ? 'Nouveau ? Créer un compte' : 'Déjà inscrit ? Se connecter'}
+          </Text>
+        </TouchableOpacity>
+      </View>:
+      <View style={styles.formContainer}>
+        <Image
+          source={require('../assets/images/icon.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        
+        <Text style={styles.title}>
+          Inscription
+        </Text>
+        
+        <View style={styles.inputContainer}>
+        <Input
+            placeholder="Prenom"
+            leftIcon={<Ionicons name="text-outline" size={24} color="green" />}
+            onChangeText={setEmail}
+            value={email}
+            autoCapitalize="none"
+            keyboardType="address"
+            containerStyle={styles.input}
+            inputContainerStyle={styles.inputField}
+          />
+          <Input
+            placeholder="Nom"
+            leftIcon={<Ionicons name="text-outline" size={24} color="green" />}
+            onChangeText={setEmail}
+            value={email}
+            autoCapitalize="none"
+            keyboardType="address"
+            containerStyle={styles.input}
+            inputContainerStyle={styles.inputField}
+          />
+             <Input
+            placeholder="Telephone"
+            leftIcon={<Ionicons name="call-outline" size={24} color="green" />}
+            onChangeText={setEmail}
+            value={email}
+            autoCapitalize="none"
+            keyboardType="address"
+            containerStyle={styles.input}
+            inputContainerStyle={styles.inputField}
+          />
+           <Input
+            placeholder="adreese"
+            leftIcon={<Ionicons name="home-outline" size={24} color="green" />}
+            onChangeText={setEmail}
+            value={email}
+            autoCapitalize="none"
+            keyboardType="address"
+            containerStyle={styles.input}
+            inputContainerStyle={styles.inputField}
+          />
+          <Input
+            placeholder="Email"
+            leftIcon={<Ionicons name="mail-outline" size={24} color="green" />}
+            onChangeText={setEmail}
+            value={email}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            containerStyle={styles.input}
+            inputContainerStyle={styles.inputField}
+          />
+          
+          <Input
+            placeholder="Mot de passe"
+            leftIcon={<Ionicons name="lock-closed-outline" size={24} color="green" />}
+            rightIcon={
+              <TouchableOpacity onPress={toggleSecureTextEntry}>
+                <Ionicons
+                  name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
+                  size={24}
+                  color="green"
+                />
+              </TouchableOpacity>
+            }
+            onChangeText={setPassword}
+            value={password}
+            secureTextEntry={secureTextEntry}
+            autoCapitalize="none"
+            containerStyle={styles.input}
+            inputContainerStyle={styles.inputField}
+          />
+        </View>
+        
+        {isLogin && (
+          <TouchableOpacity style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
+          </TouchableOpacity>
         )}
+        
+        <Button
+          title='inscrire'
+          loading={loading}
+          onPress={isLogin ? signInWithEmail : signUpWithEmail}
+          containerStyle={styles.buttonContainer}
+          buttonStyle={styles.button}
+          titleStyle={styles.buttonText}
+          loadingProps={{ color: 'white' }}
+        />
+        
+        <View style={styles.separatorContainer}>
+          <Divider style={styles.divider} />
+          <Text style={styles.separatorText}>OU</Text>
+          <Divider style={styles.divider} />
+        </View>
+        
+        <View style={styles.socialButtonsContainer}>
+          <TouchableOpacity
+            style={[styles.socialButton, styles.facebookButton]}
+            onPress={signInWithFacebook}
+            disabled={loading}
+          >
+            <FontAwesome name="facebook" size={24} color="white" />
+            <Text style={styles.socialButtonText}>Facebook</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={[styles.socialButton, styles.googleButton]}
+            onPress={signInWithGoogle}
+            disabled={loading}
+          >
+            <FontAwesome name="google" size={24} color="white" />
+            <Text style={styles.socialButtonText}>Google</Text>
+          </TouchableOpacity>
+        </View>
+        
+        <TouchableOpacity
+          style={styles.switchModeContainer}
+          onPress={() => setIsLogin(!isLogin)}
+        >
+          <Text style={styles.switchModeText}>
+            {isLogin ? 'Nouveau ? Créer un compte' : 'Déjà inscrit ? Se connecter'}
+          </Text>
+        </TouchableOpacity>
+      </View>}
+      
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#ffffff" />
+        </View>
+      )}
     </SafeAreaView>
-);
+  );
 }
 
 const styles = StyleSheet.create({
@@ -395,11 +383,11 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
-    marginBottom: 5,
+    marginBottom: 15,
     
   },
   input: {
-    marginBottom: 3,
+    marginBottom: 10,
   },
   inputField: {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
